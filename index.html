@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bouw Jouw Fiets – RvdBCustom</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #0a0a0a;
+    --surface: #111111;
+    --card: #171717;
+    --border: #252525;
+    --accent: #90ee90;
+    --accent-dim: #5ec45e;
+    --text: #e8e8e8;
+    --muted: #666;
+    --white: #ffffff;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 40px;
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 3px;
+    color: var(--white);
+  }
+  .logo span { color: var(--accent); }
+  .nav-tag {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 140px 40px 60px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .hero-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    line-height: 0.92;
+    letter-spacing: 2px;
+    color: var(--white);
+    margin-bottom: 24px;
+  }
+  .hero h1 em { color: var(--accent); font-style: normal; }
+  .hero p {
+    font-size: 1.05rem;
+    color: #999;
+    max-width: 500px;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  /* ── PROGRESS ── */
+  .progress-bar-wrap {
+    max-width: 900px; margin: 0 auto 48px; padding: 0 40px;
+  }
+  .progress-steps {
+    display: flex; gap: 0; position: relative;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .step-tab {
+    flex: 1; padding: 14px 8px; text-align: center;
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 1.5px;
+    text-transform: uppercase; cursor: pointer;
+    color: var(--muted); background: var(--surface);
+    border-right: 1px solid var(--border);
+    transition: all 0.3s; position: relative;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .step-tab:last-child { border-right: none; }
+  .step-tab.active { background: var(--accent); color: var(--black); }
+  .step-tab.done { background: #1c2a0a; color: var(--accent); }
+  .step-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem; letter-spacing: 1px;
+    line-height: 1;
+  }
+  .step-label { font-size: 0.65rem; letter-spacing: 1px; }
+
+  /* ── MAIN LAYOUT ── */
+  .configurator {
+    max-width: 900px; margin: 0 auto; padding: 0 40px 80px;
+  }
+
+  .step-panel { display: none; animation: fadeIn 0.3s ease; }
+  .step-panel.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .panel-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.8rem; letter-spacing: 2px;
+    color: var(--white); margin-bottom: 8px;
+  }
+  .panel-sub {
+    color: var(--muted); font-size: 0.9rem; margin-bottom: 32px;
+    font-weight: 300;
+  }
+
+  /* ── OPTION CARDS ── */
+  .option-grid {
+    display: grid; gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    margin-bottom: 36px;
+  }
+  .option-card {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .option-card::before {
+    content: ''; position: absolute;
+    inset: 0; background: var(--accent);
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .option-card:hover { border-color: #444; transform: translateY(-2px); }
+  .option-card.selected { border-color: var(--accent); background: #141f03; }
+  .option-card.selected::after {
+    content: '✓';
+    position: absolute; top: 12px; right: 14px;
+    font-size: 0.85rem; font-weight: 700;
+    color: var(--accent);
+  }
+  .card-icon { font-size: 1.8rem; margin-bottom: 10px; }
+  .card-title {
+    font-weight: 700; color: var(--white);
+    font-size: 1rem; margin-bottom: 4px;
+  }
+  .card-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+  .card-price {
+    margin-top: 12px;
+    font-size: 0.78rem; font-weight: 700;
+    color: var(--accent); letter-spacing: 1px;
+  }
+
+  /* ── COLOR PICKER ── */
+  .color-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px; margin-bottom: 36px;
+  }
+  .color-swatch {
+    border-radius: 8px; cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.2s; overflow: hidden;
+    aspect-ratio: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: flex-end;
+    position: relative;
+  }
+  .color-swatch:hover { transform: scale(1.04); }
+  .color-swatch.selected { border-color: var(--accent); }
+  .color-swatch.selected::after {
+    content: '✓';
+    position: absolute; top: 8px; right: 8px;
+    font-size: 0.9rem; font-weight: 900;
+    color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  }
+  .swatch-name {
+    background: rgba(0,0,0,0.55);
+    width: 100%; text-align: center;
+    font-size: 0.65rem; font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 5px 4px;
+    color: #fff;
+  }
+
+  /* ── RANGE SLIDER ── */
+  .slider-wrap { margin-bottom: 36px; }
+  .slider-label {
+    display: flex; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .slider-label span:first-child { font-weight: 500; color: var(--text); }
+  .slider-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem; color: var(--accent); letter-spacing: 1px;
+  }
+  input[type=range] {
+    width: 100%; appearance: none;
+    height: 4px; background: var(--border);
+    border-radius: 2px; outline: none; cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 3px solid var(--black);
+    box-shadow: 0 0 0 2px var(--accent);
+    cursor: pointer;
+  }
+  .slider-ticks {
+    display: flex; justify-content: space-between;
+    margin-top: 8px;
+  }
+  .slider-ticks span { font-size: 0.72rem; color: var(--muted); }
+
+  /* ── TEXT INPUT ── */
+  .form-group { margin-bottom: 20px; }
+  .form-group label {
+    display: block; font-size: 0.78rem; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 8px;
+  }
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    width: 100%;
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    padding: 12px 16px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus { border-color: var(--accent); }
+  .form-group textarea { resize: vertical; min-height: 100px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* ── NAVIGATION BUTTONS ── */
+  .nav-btns {
+    display: flex; gap: 12px; align-items: center;
+    justify-content: space-between; margin-top: 8px;
+  }
+  .btn {
+    padding: 14px 32px;
+    border-radius: 6px; border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-primary {
+    background: var(--accent); color: var(--black);
+  }
+  .btn-primary:hover { background: #adf5ad; transform: translateY(-1px); }
+  .btn-secondary {
+    background: transparent; color: var(--muted);
+    border: 2px solid var(--border);
+  }
+  .btn-secondary:hover { color: var(--text); border-color: #444; }
+  .btn-ghost { background: none; border: none; color: var(--muted); font-size: 0.8rem; cursor: pointer; padding: 8px; }
+
+  /* ── SUMMARY SIDEBAR ── */
+  .layout-with-summary {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 32px;
+    align-items: start;
+  }
+  .summary-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    position: sticky; top: 100px;
+  }
+  .summary-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem; letter-spacing: 2px;
+    color: var(--muted); margin-bottom: 16px;
+  }
+  .summary-line {
+    display: flex; justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.82rem;
+  }
+  .summary-line:last-of-type { border-bottom: none; }
+  .summary-line .key { color: var(--muted); }
+  .summary-line .val { color: var(--text); font-weight: 500; text-align: right; max-width: 140px; }
+  .summary-total {
+    margin-top: 16px; padding-top: 16px;
+    border-top: 2px solid var(--border);
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .summary-total .label { font-size: 0.75rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+  .summary-total .price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem; color: var(--accent); letter-spacing: 1px;
+  }
+  .summary-dot {
+    display: inline-block; width: 8px; height: 8px;
+    border-radius: 50%; background: var(--accent);
+    margin-right: 6px; vertical-align: middle;
+  }
+
+  /* ── CONFIRMATION ── */
+  .confirm-hero {
+    text-align: center; padding: 40px 0;
+  }
+  .confirm-icon {
+    width: 80px; height: 80px;
+    background: var(--accent); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; margin: 0 auto 24px;
+  }
+  .confirm-hero h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem; letter-spacing: 2px; color: var(--white);
+    margin-bottom: 12px;
+  }
+  .confirm-hero p { color: var(--muted); max-width: 420px; margin: 0 auto 32px; }
+
+  .spec-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 12px; margin: 32px 0;
+  }
+  .spec-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px 20px;
+  }
+  .spec-card .k { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 4px; }
+  .spec-card .v { font-size: 1rem; color: var(--white); font-weight: 500; }
+
+  .timeline {
+    display: flex; gap: 0;
+    border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+    margin: 24px 0 36px;
+  }
+  .tl-step {
+    flex: 1; padding: 16px 12px; text-align: center;
+    border-right: 1px solid var(--border);
+    font-size: 0.72rem; color: var(--muted); letter-spacing: 0.5px;
+  }
+  .tl-step:last-child { border-right: none; }
+  .tl-step .tl-icon { font-size: 1.3rem; margin-bottom: 6px; }
+  .tl-step .tl-label { font-weight: 600; color: var(--text); }
+  .tl-step .tl-time { color: var(--muted); font-size: 0.68rem; margin-top: 2px; }
+
+  /* ── BIG CHOICE CARDS (step 1) ── */
+  .choice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+  .choice-card {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 32px 28px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s, transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    min-height: 260px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    user-select: none;
+  }
+  .choice-card:hover { border-color: #3a3a3a; transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+  .choice-card.selected { border-color: var(--accent); background: #121d02; }
+  .choice-check {
+    position: absolute; top: 16px; right: 18px;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--accent); color: var(--black);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 900;
+    opacity: 0; transition: opacity 0.2s;
+    pointer-events: none;
+  }
+  .choice-card.selected .choice-check { opacity: 1; }
+  .choice-icon { font-size: 2.6rem; margin-bottom: 16px; line-height: 1; pointer-events: none; }
+  .choice-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem; letter-spacing: 2px;
+    color: var(--white); line-height: 1; margin-bottom: 10px;
+    pointer-events: none;
+  }
+  .choice-tagline {
+    font-size: 0.8rem; color: var(--muted);
+    font-weight: 300; line-height: 1.6; margin-bottom: 20px;
+    flex: 1; pointer-events: none;
+  }
+  .choice-tags {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px;
+    pointer-events: none;
+  }
+  .choice-tag {
+    font-size: 0.68rem; font-weight: 600; letter-spacing: 0.5px;
+    padding: 4px 10px; border-radius: 20px;
+    background: var(--surface); color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .choice-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem; letter-spacing: 1px; color: var(--accent);
+    border-top: 1px solid var(--border); padding-top: 14px;
+    pointer-events: none;
+  }
+  .choice-price small {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem; color: var(--muted);
+    font-weight: 400; letter-spacing: 0; display: block;
+    margin-top: 2px;
+  }
+  @media (max-width: 600px) {
+    .choice-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 720px) {
+    nav { padding: 16px 20px; }
+    .hero, .progress-bar-wrap, .configurator { padding-left: 20px; padding-right: 20px; }
+    .layout-with-summary { grid-template-columns: 1fr; }
+    .summary-box { position: static; }
+    .form-row { grid-template-columns: 1fr; }
+    .step-label { display: none; }
+    .spec-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">RvdB<span>Custom</span></div>
+  <span class="nav-tag">Configurator</span>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">Stap voor stap naar jouw droomfiets</div>
+  <h1>Bouw<br><em>Jouw</em><br>Fiets</h1>
+  <p>Volledig op maat. Jij bepaalt het frame, de kleur, de afmontage en je budget. Wij bouwen het.</p>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-steps">
+    <div class="step-tab active" onclick="goTo(1)">
+      <span class="step-num">01</span>
+      <span class="step-label">Rijstijl</span>
+    </div>
+    <div class="step-tab" onclick="goTo(2)">
+      <span class="step-num">02</span>
+      <span class="step-label">Kleur</span>
+    </div>
+    <div class="step-tab" onclick="goTo(3)">
+      <span class="step-num">03</span>
+      <span class="step-label">Afmontage</span>
+    </div>
+    <div class="step-tab" onclick="goTo(4)">
+      <span class="step-num">04</span>
+      <span class="step-label">Budget</span>
+    </div>
+    <div class="step-tab" onclick="goTo(5)">
+      <span class="step-num">05</span>
+      <span class="step-label">Intake</span>
+    </div>
+  </div>
+</div>
+
+<div class="configurator">
+
+  <!-- STEP 1: Rijstijl -->
+  <div class="step-panel active" id="step-1">
+    <div class="layout-with-summary">
+      <div>
+        <div class="panel-title">Jouw Rijstijl</div>
+        <div class="panel-sub">Kies het type dat het beste bij jou past — we stemmen de geometrie hierop af.</div>
+        <div class="choice-grid">
+          <div class="choice-card" onclick="selectChoice(this,'rijstijl','Endurance / Gravel',0)">
+            <div class="choice-check">✓</div>
+            <div>
+              <div class="choice-icon">🛤️</div>
+              <div class="choice-title">Endurance / Gravel</div>
+              <div class="choice-tagline">Comfortabele zitpositie voor lange ritten, granfondo's en onverharde wegen. De fiets die je overal mee naartoe neemt.</div>
+              <div class="choice-tags">
+                <span class="choice-tag">Lange ritten</span>
+                <span class="choice-tag">Granfondo</span>
+                <span class="choice-tag">Gravel</span>
+                <span class="choice-tag">Comfort</span>
+              </div>
+            </div>
+            <div class="choice-price">
+              VANAF €2.999
+              <small>Compleet rijklaar incl. 105 Di2</small>
+            </div>
+          </div>
+          <div class="choice-card" onclick="selectChoice(this,'rijstijl','Race / Klimmen',0)">
+            <div class="choice-check">✓</div>
+            <div>
+              <div class="choice-icon">⚡</div>
+              <div class="choice-title">Race / Klimmen</div>
+              <div class="choice-tagline">Agressieve, aerodynamische positie voor maximale snelheid en klimprestaties. Gebouwd om te winnen.</div>
+              <div class="choice-tags">
+                <span class="choice-tag">Snelheid</span>
+                <span class="choice-tag">Klimmen</span>
+                <span class="choice-tag">Aero</span>
+                <span class="choice-tag">Licht gewicht</span>
+              </div>
+            </div>
+            <div class="choice-price">
+              VANAF €3.199
+              <small>Compleet rijklaar incl. 105 Di2</small>
+            </div>
+          </div>
+        </div>
+        <div class="nav-btns">
+          <span></span>
+          <button class="btn btn-primary" id="step1-next" onclick="next()" disabled style="opacity:0.35;cursor:not-allowed">Kies een rijstijl →</button>
+        </div>
+      </div>
+      <div id="summary-1"><!-- summary injected --></div>
+    </div>
+  </div>
+
+  <!-- STEP 2: Kleur -->
+  <div class="step-panel" id="step-2">
+    <div class="layout-with-summary">
+      <div>
+        <div class="panel-title">Kleur & Lak</div>
+        <div class="panel-sub">Jouw frame, jouw kleur. Van subtiel tot knalhard — of volledig custom op aanvraag.</div>
+        <div class="color-grid" id="colorGrid"></div>
+        <div style="background:var(--card);border:2px dashed var(--border);border-radius:10px;padding:20px;margin-bottom:32px;display:flex;align-items:center;gap:16px;cursor:pointer" onclick="select(null,'kleur','Volledig custom (overleg)','+ €150',150)">
+          <div style="font-size:1.5rem">🎨</div>
+          <div>
+            <div style="font-weight:700;color:var(--white);margin-bottom:4px">Volledig custom kleur</div>
+            <div style="font-size:0.8rem;color:var(--muted)">Elke RAL/kleurcode, two-tone, fade of decals naar wens. Overleg via intake.</div>
+          </div>
+          <div style="margin-left:auto;font-size:0.8rem;font-weight:700;color:var(--accent)">+ €150</div>
+        </div>
+        <div class="nav-btns">
+          <button class="btn btn-secondary" onclick="prev()">← Terug</button>
+          <button class="btn btn-primary" onclick="next()">Volgende stap →</button>
+        </div>
+      </div>
+      <div id="summary-2"></div>
+    </div>
+  </div>
+
+  <!-- STEP 3: Afmontage -->
+  <div class="step-panel" id="step-3">
+    <div class="layout-with-summary">
+      <div>
+        <div class="panel-title">Afmontage</div>
+        <div class="panel-sub">Kies je groepset en wielset. Verfijn details later tijdens de intake.</div>
+
+        <div style="font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Groepset</div>
+        <div class="option-grid">
+          <div class="option-card" onclick="select(this,'groepset','Shimano 105 Di2',0)">
+            <div class="card-title">Shimano 105 Di2</div>
+            <div class="card-desc">Elektronisch schakelen. Betrouwbaar, licht en scherp geprijsd. Perfect instapniveau.</div>
+            <div class="card-price">INBEGREPEN</div>
+          </div>
+          <div class="option-card" onclick="select(this,'groepset','Shimano Ultegra Di2',330)">
+            <div class="card-title">Shimano Ultegra Di2</div>
+            <div class="card-desc">Professionele kwaliteit, semi-pro gewicht. Ideaal voor de serieuze fietser.</div>
+            <div class="card-price">+ €330</div>
+          </div>
+          <div class="option-card" onclick="select(this,'groepset','Shimano Dura-Ace Di2',1200)">
+            <div class="card-title">Shimano Dura-Ace Di2</div>
+            <div class="card-desc">Het absolute topniveau. Gebruikt door pro's in de WorldTour.</div>
+            <div class="card-price">+ €1.200</div>
+          </div>
+          <div class="option-card" onclick="select(this,'groepset','SRAM AXS Rival',371)">
+            <div class="card-title">SRAM AXS Rival</div>
+            <div class="card-desc">Draadloos schakelen, betaalbaar instapniveau binnen SRAM AXS.</div>
+            <div class="card-price">+ €371</div>
+          </div>
+          <div class="option-card" onclick="select(this,'groepset','SRAM AXS Force',851)">
+            <div class="card-title">SRAM AXS Force</div>
+            <div class="card-desc">Draadloos schakelen, krachtige remmen. Lichte en stijlvolle keuze.</div>
+            <div class="card-price">+ €851</div>
+          </div>
+          <div class="option-card" onclick="select(this,'groepset','SRAM AXS Red',2091)">
+            <div class="card-title">SRAM AXS Red</div>
+            <div class="card-desc">Het absolute SRAM topniveau. Ultra licht, volledig draadloos.</div>
+            <div class="card-price">+ €2.091</div>
+          </div>
+          <div class="option-card" onclick="select(this,'groepset','Shimano GRX Di2 1x12',300)">
+            <div class="card-title">Shimano GRX Di2 1x12</div>
+            <div class="card-desc">Ideaal voor gravel. Eén kettingblad, licht en slagvast.</div>
+            <div class="card-price">+ €300</div>
+          </div>
+          <div class="option-card" onclick="select(this,'groepset','Shimano GRX Di2 2x12',400)">
+            <div class="card-title">Shimano GRX Di2 2x12</div>
+            <div class="card-desc">Gravel met dubbel kettingblad. Maximale veelzijdigheid op en naast de weg.</div>
+            <div class="card-price">+ €400</div>
+          </div>
+        </div>
+
+        <div style="font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;margin-top:8px">Wielen</div>
+        <div class="option-grid">
+          <div class="option-card" onclick="select(this,'wielen','Aluminium wielset',0)">
+            <div class="card-title">Aluminium wielset</div>
+            <div class="card-desc">Degelijk en betrouwbaar. Solide keuze voor dagelijks gebruik en trainingsritten.</div>
+            <div class="card-price">INBEGREPEN</div>
+          </div>
+          <div class="option-card" onclick="select(this,'wielen','Carbon wielset',301)">
+            <div class="card-title">Carbon wielset</div>
+            <div class="card-desc">Lichter, stijver en sneller. De upgrade die je direct voelt op weg en climb.</div>
+            <div class="card-price">+ €301</div>
+          </div>
+        </div>
+
+        <div class="nav-btns">
+          <button class="btn btn-secondary" onclick="prev()">← Terug</button>
+          <button class="btn btn-primary" onclick="next()">Volgende stap →</button>
+        </div>
+      </div>
+      <div id="summary-4"></div>
+    </div>
+  </div>
+
+  <!-- STEP 4: Budget -->
+  <div class="step-panel" id="step-4">
+    <div class="layout-with-summary">
+      <div>
+        <div class="panel-title">Jouw Budget</div>
+        <div class="panel-sub">We stemmen het advies af op wat voor jou logisch is. Geen verrassingen.</div>
+
+        <div class="slider-wrap">
+          <div class="slider-label">
+            <span>Totaalbudget (compleet rijklaar)</span>
+            <span class="slider-value" id="budgetVal">€ 4.000</span>
+          </div>
+          <input type="range" id="budgetSlider" min="2999" max="12000" step="100" value="4000" oninput="updateBudget(this.value)">
+          <div class="slider-ticks">
+            <span>€2.999</span>
+            <span>€5.000</span>
+            <span>€8.000</span>
+            <span>€12.000</span>
+          </div>
+        </div>
+
+        <div id="budgetAdvice" style="background:var(--card);border-left:3px solid var(--accent);padding:16px 20px;border-radius:0 8px 8px 0;margin-bottom:32px">
+          <!-- dynamic -->
+        </div>
+
+        <div style="font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Levering</div>
+        <div class="option-grid">
+          <div class="option-card" onclick="select(this,'levering','Ophalen in Zoetermeer','Gratis',0)">
+            <div class="card-icon">📍</div>
+            <div class="card-title">Ophalen in Zoetermeer</div>
+            <div class="card-desc">Wij stellen alles samen af op jouw zitpositie. Je rijdt direct weg.</div>
+            <div class="card-price">GRATIS</div>
+          </div>
+          <div class="option-card" onclick="select(this,'levering','Thuislevering in NL','Max. €250',0)">
+            <div class="card-icon">🚚</div>
+            <div class="card-title">Thuislevering in NL</div>
+            <div class="card-desc">Rijklaar bij jou thuis bezorgd. Kosten worden vooraf bevestigd, max. €250.</div>
+            <div class="card-price">MAX. €250</div>
+          </div>
+        </div>
+
+        <div class="nav-btns">
+          <button class="btn btn-secondary" onclick="prev()">← Terug</button>
+          <button class="btn btn-primary" onclick="next()">Naar de intake →</button>
+        </div>
+      </div>
+      <div id="summary-4"></div>
+    </div>
+  </div>
+
+  <!-- STEP 5: Intake -->
+  <div class="step-panel" id="step-5">
+    <div class="layout-with-summary">
+      <div>
+        <div class="panel-title">Intake aanvragen</div>
+        <div class="panel-sub">Jouw configuratie wordt meegestuurd. Robin neemt binnen 1 werkdag contact op.</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Voornaam</label>
+            <input type="text" id="fname" placeholder="Robin">
+          </div>
+          <div class="form-group">
+            <label>Achternaam</label>
+            <input type="text" id="lname" placeholder="van den Broek">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>E-mailadres</label>
+            <input type="email" id="email" placeholder="jij@email.nl">
+          </div>
+          <div class="form-group">
+            <label>Telefoonnummer</label>
+            <input type="tel" id="phone" placeholder="06 12 34 56 78">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Lichaamslength (cm)</label>
+            <input type="number" id="height" placeholder="180">
+          </div>
+          <div class="form-group">
+            <label>Gewicht (kg)</label>
+            <input type="number" id="weight" placeholder="75">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Heb je al een bikefitting gehad?</label>
+          <select id="fitting">
+            <option value="">Selecteer...</option>
+            <option>Ja, dynamische fitting</option>
+            <option>Ja, statische fitting</option>
+            <option>Nee, maar ik wil dit regelen</option>
+            <option>Nee, ik wil dat RvdBCustom dit inschat</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Waar gebruik jij de fiets voor?</label>
+          <input type="text" placeholder="Bijv. granfondo's, wekelijks wielrennen, vakantietochten...">
+        </div>
+        <div class="form-group">
+          <label>Eventuele klachten of bijzonderheden</label>
+          <textarea placeholder="Rugklachten, knieproblemen, bestaande fietsmaten, anything goes..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Hoe wil je de intake doen?</label>
+          <select>
+            <option>Videogesprek (Teams / FaceTime / WhatsApp)</option>
+            <option>Telefonisch</option>
+            <option>Op locatie in Zoetermeer</option>
+          </select>
+        </div>
+
+        <div class="nav-btns">
+          <button class="btn btn-secondary" onclick="prev()">← Terug</button>
+          <button class="btn btn-primary" onclick="submitForm()" style="padding:16px 40px;font-size:1rem">
+            Verstuur aanvraag ✓
+          </button>
+        </div>
+      </div>
+      <div id="summary-5"></div>
+    </div>
+  </div>
+
+  <!-- STEP 6: Bevestiging -->
+  <div class="step-panel" id="step-6">
+    <div class="confirm-hero">
+      <div class="confirm-icon">✓</div>
+      <h2>Aanvraag Ontvangen</h2>
+      <p>Robin neemt binnen 1 werkdag contact met je op. Je ontvangt een bevestiging op het opgegeven e-mailadres.</p>
+
+      <div class="timeline">
+        <div class="tl-step">
+          <div class="tl-icon">📬</div>
+          <div class="tl-label">Bevestiging</div>
+          <div class="tl-time">Vandaag</div>
+        </div>
+        <div class="tl-step">
+          <div class="tl-icon">📞</div>
+          <div class="tl-label">Intake gesprek</div>
+          <div class="tl-time">1–2 werkdagen</div>
+        </div>
+        <div class="tl-step">
+          <div class="tl-icon">🖊️</div>
+          <div class="tl-label">Offerte & akkoord</div>
+          <div class="tl-time">3–5 werkdagen</div>
+        </div>
+        <div class="tl-step">
+          <div class="tl-icon">🔧</div>
+          <div class="tl-label">Productie</div>
+          <div class="tl-time">4–10 weken</div>
+        </div>
+        <div class="tl-step">
+          <div class="tl-icon">🚴</div>
+          <div class="tl-label">Levering</div>
+          <div class="tl-time">Rijklaar</div>
+        </div>
+      </div>
+
+      <div class="spec-grid" id="confirmSpec"></div>
+
+      <p style="color:var(--muted);font-size:0.85rem;margin-top:8px">
+        Vragen? Mail naar <span style="color:var(--accent)">info@rvdbcustom.com</span>
+      </p>
+    </div>
+  </div>
+
+</div><!-- /configurator -->
+
+<script>
+  // ── STATE ──
+  const cfg = {
+    rijstijl: '', frame: '', kleur: '', groepset: '', wielen: '',
+    levering: '', budget: 4000,
+    extras: { rijstijl: 0, frame: 0, kleur: 0, groepset: 0, wielen: 0, levering: 0 }
+  };
+  const BASE = 2999;
+  let currentStep = 1;
+  const TOTAL_STEPS = 5;
+
+  // ── COLORS ──
+  const colors = [
+    { name: 'Midnight Black', hex: '#0d0d0d', extra: 0 },
+    { name: 'Arctic White', hex: '#f0efeb', extra: 0 },
+    { name: 'Signal Red', hex: '#c0392b', extra: 0 },
+    { name: 'Cobalt Blue', hex: '#1a4f8a', extra: 0 },
+    { name: 'Forest Green', hex: '#2d5a27', extra: 0 },
+    { name: 'Champagne Gold', hex: '#c9a84c', extra: 50 },
+    { name: 'Slate Grey', hex: '#5a6475', extra: 0 },
+    { name: 'Electric Lime', hex: '#c8f135', extra: 0 },
+    { name: 'Deep Purple', hex: '#4a1f5e', extra: 0 },
+    { name: 'Burnt Orange', hex: '#c0531a', extra: 0 },
+    { name: 'Pearl Rose', hex: '#d4a0a0', extra: 50 },
+    { name: 'Stealth Mat', hex: '#1a1a1a', extra: 80 },
+    { name: 'Raw Matt', hex: '#b0a898', extra: 0, label: 'Transparant mat — carbon zichtbaar' },
+    { name: 'Raw Glossy', hex: '#c8bfb0', extra: 0, label: 'Transparant glans — carbon zichtbaar', glossy: true },
+  ];
+
+  function initColors() {
+    const grid = document.getElementById('colorGrid');
+    colors.forEach((c, i) => {
+      const el = document.createElement('div');
+      el.className = 'color-swatch';
+      el.style.background = c.glossy
+        ? `linear-gradient(135deg, #c8bfb0 0%, #e8e0d5 40%, #c8bfb0 100%)`
+        : c.hex;
+      const subtitle = c.label ? `<span style="display:block;font-size:0.58rem;opacity:0.8;margin-top:1px">${c.label}</span>` : '';
+      el.innerHTML = `<span class="swatch-name">${c.name}${c.extra ? ' +€'+c.extra : ''}${subtitle}</span>`;
+      el.onclick = () => {
+        document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+        el.classList.add('selected');
+        cfg.kleur = c.name;
+        cfg.extras.kleur = c.extra;
+        renderSummary();
+      };
+      grid.appendChild(el);
+    });
+  }
+
+  function selectChoice(el, key, val, extra) {
+    document.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    cfg[key] = val;
+    if (extra !== undefined) cfg.extras[key] = extra;
+    const btn = document.getElementById('step1-next');
+    if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; btn.textContent = 'Volgende stap →'; }
+    renderSummary();
+  }
+
+  // ── SELECTION ──
+  function select(el, key, val, extra) {
+    if (el) {
+      const siblings = el.parentElement.querySelectorAll('.option-card');
+      siblings.forEach(s => s.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+    cfg[key] = val;
+    if (extra !== undefined) cfg.extras[key] = extra;
+    renderSummary();
+  }
+
+  // ── SUMMARY ──
+  function calcTotal() {
+    return BASE + Object.values(cfg.extras).reduce((a,b) => a+b, 0);
+  }
+
+  function renderSummary() {
+    const total = calcTotal();
+    const html = `
+      <div class="summary-box">
+        <div class="summary-title">📋 Jouw configuratie</div>
+        ${row('Rijstijl', cfg.rijstijl)}
+        ${row('Frame', cfg.frame)}
+        ${row('Kleur', cfg.kleur)}
+        ${row('Groepset', cfg.groepset)}
+        ${row('Wielen', cfg.wielen)}
+        ${row('Levering', cfg.levering)}
+        <div class="summary-total">
+          <span class="label">Geschatte prijs</span>
+          <span class="price">€${total.toLocaleString('nl-NL')}</span>
+        </div>
+        <div style="font-size:0.68rem;color:var(--muted);margin-top:8px;line-height:1.5">
+          Exacte prijs na intake. Incl. btw, excl. leveringskosten.
+        </div>
+      </div>`;
+    for (let i = 1; i <= TOTAL_STEPS; i++) {
+      const el = document.getElementById('summary-'+i);
+      if (el) el.innerHTML = html;
+    }
+  }
+
+  function row(label, val) {
+    if (!val) return `<div class="summary-line"><span class="key">${label}</span><span class="val" style="color:var(--muted);font-style:italic">—</span></div>`;
+    return `<div class="summary-line"><span class="key">${label}</span><span class="val">${val}</span></div>`;
+  }
+
+  // ── BUDGET ──
+  function updateBudget(v) {
+    cfg.budget = parseInt(v);
+    document.getElementById('budgetVal').textContent = '€ ' + parseInt(v).toLocaleString('nl-NL');
+    const advice = document.getElementById('budgetAdvice');
+    if (v < 3500) {
+      advice.innerHTML = '<strong style="color:var(--accent)">Goed nieuws</strong> — met dit budget bouw je een complete, rijklare maatwerk racefiets met 105 Di2 en carbon 38mm wielen. Geen concessies aan het frame.';
+    } else if (v < 6000) {
+      advice.innerHTML = '<strong style="color:var(--accent)">Veel speelruimte</strong> — hier komt Ultegra Di2 of SRAM Force AXS in beeld, gecombineerd met betere wielen. De sweet spot voor serieuze rijders.';
+    } else if (v < 9000) {
+      advice.innerHTML = '<strong style="color:var(--accent)">Premium build</strong> — Dura-Ace Di2, aerowielen, premium zadel en eventueel custom decals. Dit is de fiets die mensen aanspreken.';
+    } else {
+      advice.innerHTML = '<strong style="color:var(--accent)">No limits</strong> — volledig op maat. Topgroepset, handgespaakte wielen, custom lak, ultra-light accessoires. Robin overloopt alles met je.';
+    }
+    renderSummary();
+  }
+
+  // ── NAVIGATION ──
+  function goTo(step) {
+    if (step > currentStep + 1) return;
+    currentStep = step;
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('step-' + step).classList.add('active');
+    document.querySelectorAll('.step-tab').forEach((t, i) => {
+      t.classList.remove('active', 'done');
+      if (i + 1 === step) t.classList.add('active');
+      else if (i + 1 < step) t.classList.add('done');
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    renderSummary();
+  }
+
+  function next() { if (currentStep < TOTAL_STEPS) goTo(currentStep + 1); }
+  function prev() { if (currentStep > 1) goTo(currentStep - 1); }
+
+  // ── SUBMIT ──
+  function submitForm() {
+    const fname = document.getElementById('fname').value;
+    if (!fname) { alert('Vul je voornaam in.'); return; }
+    const email = document.getElementById('email').value;
+    if (!email || !email.includes('@')) { alert('Vul een geldig e-mailadres in.'); return; }
+
+    // Show confirmation step
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('step-6').classList.add('active');
+    document.querySelectorAll('.step-tab').forEach(t => t.classList.add('done'));
+
+    // Fill spec grid
+    const total = calcTotal();
+    const specs = [
+      ['Rijstijl', cfg.rijstijl || '—'],
+      ['Kleur', cfg.kleur || '—'],
+      ['Groepset', cfg.groepset || '—'],
+      ['Wielen', cfg.wielen || '—'],
+      ['Levering', cfg.levering || '—'],
+      ['Budget', '€ ' + cfg.budget.toLocaleString('nl-NL')],
+      ['Geschatte prijs', '€ ' + total.toLocaleString('nl-NL')],
+    ];
+    document.getElementById('confirmSpec').innerHTML = specs.map(([k,v]) =>
+      `<div class="spec-card"><div class="k">${k}</div><div class="v">${v}</div></div>`
+    ).join('');
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── INIT ──
+  initColors();
+  updateBudget(4000);
+  renderSummary();
+</script>
+</body>
+</html>
