@@ -507,18 +507,34 @@
       <div>
         <div class="panel-title">Jouw Rijstijl</div>
         <div class="panel-sub">Kies het type dat het beste bij jou past — we stemmen de geometrie hierop af.</div>
-        <div class="choice-grid">
-          <div class="choice-card" onclick="selectChoice(this,'rijstijl','Endurance / Gravel',0)">
+        <div class="choice-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+          <div class="choice-card" onclick="selectChoice(this,'rijstijl','Endurance',0)">
             <div class="choice-check">✓</div>
             <div>
               <div class="choice-icon">🛤️</div>
-              <div class="choice-title">Endurance / Gravel</div>
-              <div class="choice-tagline">Comfortabele zitpositie voor lange ritten, granfondo's en onverharde wegen. De fiets die je overal mee naartoe neemt.</div>
+              <div class="choice-title">Endurance</div>
+              <div class="choice-tagline">Comfortabele zitpositie voor lange ritten en granfondo's. De fiets die je overal mee naartoe neemt.</div>
               <div class="choice-tags">
                 <span class="choice-tag">Lange ritten</span>
                 <span class="choice-tag">Granfondo</span>
-                <span class="choice-tag">Gravel</span>
                 <span class="choice-tag">Comfort</span>
+              </div>
+            </div>
+            <div class="choice-price">
+              VANAF €2.999
+              <small>Compleet rijklaar incl. 105 Di2</small>
+            </div>
+          </div>
+          <div class="choice-card" onclick="selectChoice(this,'rijstijl','Gravel',0)">
+            <div class="choice-check">✓</div>
+            <div>
+              <div class="choice-icon">🌿</div>
+              <div class="choice-title">Gravel</div>
+              <div class="choice-tagline">Veelzijdig frame voor asfalt én onverharde wegen. Avontuur zonder grenzen.</div>
+              <div class="choice-tags">
+                <span class="choice-tag">Gravel</span>
+                <span class="choice-tag">Allroad</span>
+                <span class="choice-tag">Avontuur</span>
               </div>
             </div>
             <div class="choice-price">
@@ -911,7 +927,6 @@
 
   function renderSummary() {
     const total = calcTotal();
-    const base = cfg.rijstijl === 'Race / Klimmen' ? 3199 : 2999;
     const html = `
       <div class="summary-box">
         <div class="summary-title">📋 Jouw configuratie</div>
